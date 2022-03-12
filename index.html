@@ -167,4 +167,29 @@
       <div class="footer-copyright text-center py-3 text-white">© 2019 Trilogy Education Services, a 2U, Inc. brand. All Rights Reserved.</div>        
     </footer>
 </body>
+<script>
+  // registers the service worker. Basically, this step tells the browser 
+  // that we're using a service worker and explains where to find the 
+  // relevant code.
+  (function() {
+    // checks to see if serviceWorker exists on the global navigator object.
+    // Try console-logging navigator in the browser. You'll see that the 
+    // object contains information about which browser a visitor is using. 
+    // Among this data is a property that determines whether or not the 
+    // browser has support for a service worker.
+    // Service workers do NOT need webpack to work. Because the application 
+    // is already using webpack, we'll only need to prepend the names of the 
+    // JavaScript files to cache in the dist/ folder. Other than that, the 
+    // steps to add a service worker to an application without webpack are 
+    // exactly the same.
+    if("serviceWorker" in navigator) {
+      // Note that we don't need to add a <script src="./service-worker.js"> 
+      // tag, because navigator.serviceWorker.register("./service-worker.js") 
+      // does that for us.
+      navigator.serviceWorker.register("./service-worker.js")
+        .then(() => console.log("Service Worker registered successfully."))
+        .catch(error => console.log("Service Worker registration failed:", error));
+    }
+  })();
+</script>
 </html>
