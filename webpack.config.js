@@ -4,8 +4,19 @@ const path = require("path");
 // Because plugins are built into webpack, we need to be sure we're 
 // bringing webpack's methods and properties into the config file.
 const webpack = require("webpack");
+// see google docs, PWA Notes, Convert the App Into a PWA
+const WebpackPwaManifest = require("webpack-pwa-manifest");
 
 module.exports = {
+  // needed so the webpack-dev-server knows where to find
+  // the html files to serve
+    devServer: {
+      static: {
+        directory: path.join(__dirname, "./"),
+      },
+      compress: true,
+      port: 8080,
+    },
     // For a basic configuration, we need to provide webpack with three 
     // properties: entry, output, and mode. The first thing we want to 
     // declare is the entry property. The entry point is the root of the 
@@ -119,6 +130,60 @@ module.exports = {
             $: "jquery",
             jQuery: "jquery"
         }),
+        // // see google docs, PWA Notes, Convert the App Into a PWA
+        // Now that we have the plugins functionality brought into 
+        // our webpack.config.js file, we can add the plugin to the 
+        // plugins section.
+        // When we use the new keyword, we are invoking a constructor 
+        // function. After we instantiate our new WebpackPwaManifest, 
+        // we provide an object as our only argument.
+        // Now that our plugin is configured, we can generate our web 
+        // manifest file. Navigate back to your terminal, and in the root 
+        // of the project directory run npm run build. Once this build is 
+        // complete, a new manifest.json will have been created inside of 
+        // the dist folder of the project.
+        new WebpackPwaManifest({
+          name: "Food Event",
+          // name that shows up on homepage of desktop or phone app,
+          // under icon
+          short_name: "Foodies",
+          description: "An app that allows you to view upcoming food events.",
+          // specify the homepage for the PWA relative to the location 
+          // of the manifest file.
+          start_url: "../index.html",
+          // if the app launches and waits for the browser, this decides what 
+          // color the waiting splashscreen will be
+          background_color: "#01579b",
+          theme_color: "#ffffff",
+          // These two properties—fingerprints and inject—were not present 
+          // in our manifest.json. That is because they are both specific 
+          // to the manifest plugin. Fingerprints tell webpack whether or 
+          // not it should generate unique fingerprints so that each time 
+          // a new manifest is generated, it looks like this: 
+          // manifest.lhge325d.json. Because we do not want this feature, 
+          // we set fingerprints to be false.
+          fingerprints: false,
+          // The inject property determines whether the link to the 
+          // manifest.json is added to the HTML. Because we are not 
+          // using fingerprints, we can also set inject to be false. 
+          // We will hardcode the path to the manifest.json instead, 
+          // just like we would in an application without webpack.
+          inject: false,
+          // Finally, we provide an icons property, the value of which 
+          // will be an array of objects. That object contains a src 
+          // property, which is a path to the icon image we want to use. 
+          // The next property is sizes. The plugin will take the src 
+          // image, and create icons with the dimensions of the numbers 
+          // provided as the value of the sizes property. Finally, the 
+          // destination property designates where the icons will be sent 
+          // after the creation of the web manifest is completed by the 
+          // plugin.
+          icons: [{
+            src: path.resolve("assets/img/icons/icon-512x512.png"),
+            sizes: [96, 128, 192, 256, 384, 512],
+            destination: path.join("assets", "icons")
+          }]
+        })
         // Bootstrap doesn't have any special variables that webpack 
         // doesn't understand, the only thing we need to do is require the 
         // package at the top of the script.js file.
